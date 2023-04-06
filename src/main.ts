@@ -252,3 +252,8 @@ fileInput.addEventListener("change", (event) => {
     }
   }
 });
+
+// Navigation behaviour
+window.addEventListener("hashchange", function () {
+  window.scrollTo(window.scrollX, window.scrollY - 100);
+});
