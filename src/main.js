@@ -3,6 +3,7 @@ var manyNodes = 0;
 var nodes = [];
 var paths = [];
 var matrix;
+var selectedLayer;
 // Create map
 var map = L.map("map", { doubleClickZoom: false }).setView([-6.88792, 107.61033], 13);
 // Tile Layer
@@ -14,9 +15,19 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 map.on("dblclick", function (e) {
     // Increment amount of nodes
     manyNodes++;
+    var buttonDelete = document.createElement("button");
+    buttonDelete.innerHTML = "Delete";
+    buttonDelete.addEventListener("click", function () {
+        map.removeLayer(selectedLayer);
+    });
+    var name = document.createElement("p");
+    name.innerHTML = manyNodes.toString();
+    var content = document.createElement("div");
+    content.appendChild(name);
+    content.appendChild(buttonDelete);
     // Create new marker
     var marker = L.marker(e.latlng, { draggable: true })
-        .bindPopup(manyNodes.toString())
+        .bindPopup(content)
         .addTo(map)
         .openPopup();
     // Add dragend listener to marker
@@ -28,43 +39,36 @@ map.on("dblclick", function (e) {
         paths = [];
         // Recreate all path with updated markers
         for (var i = 0; i < matrix.length; i++) {
-            var _loop_1 = function (j) {
+            for (var j = i; j < matrix[0].length; j++) {
                 // If edge exists
                 if (matrix[i][j] != 0) {
                     // Create polyline as path
-                    var polyline_1 = L.polyline([nodes[i].getLatLng(), nodes[j].getLatLng()], {
+                    var polyline = L.polyline([nodes[i].getLatLng(), nodes[j].getLatLng()], {
                         color: "blue",
                     }).addTo(map);
                     // Calculate distance
                     var distance = nodes[i].getLatLng().distanceTo(nodes[j].getLatLng()) / 1000;
                     // Create popup content with distance
                     var popupContent = "Distance: " + distance.toFixed(4) + " km";
-                    polyline_1.bindPopup(popupContent);
-                    // Add mouseover and mouseout listener to polyline
-                    polyline_1.on("mouseover", function () {
-                        polyline_1.openPopup();
+                    var buttonDelete_1 = document.createElement("button");
+                    buttonDelete_1.innerHTML = "Delete";
+                    buttonDelete_1.addEventListener("click", function () {
+                        map.removeLayer(selectedLayer);
                     });
-                    polyline_1.on("mouseout", function () {
-                        polyline_1.closePopup();
-                    });
+                    var name_1 = document.createElement("p");
+                    name_1.innerHTML = popupContent;
+                    var content_1 = document.createElement("div");
+                    content_1.appendChild(name_1);
+                    content_1.appendChild(buttonDelete_1);
+                    polyline.bindPopup(content_1);
                     // Push new polyline to array
-                    paths.push(polyline_1);
+                    paths.push(polyline);
                 }
-            };
-            for (var j = 0; j < matrix[0].length; j++) {
-                _loop_1(j);
             }
         }
     });
     // Add new marker to nodes
     nodes.push(marker);
-    // Add mouseover and mouseout listener to marker
-    marker.on("mouseover", function () {
-        marker.openPopup();
-    });
-    marker.on("mouseout", function () {
-        marker.closePopup();
-    });
 });
 // Restart Button
 var restartButton = document.getElementById("restart");
@@ -104,16 +108,20 @@ fileInput.addEventListener("change", function (event) {
                     var marker = L.marker([markerData.latitude, markerData.longitude], {
                         draggable: true,
                     });
-                    marker.bindPopup(markerData.name).addTo(map);
+                    var buttonDelete = document.createElement("button");
+                    buttonDelete.innerHTML = "Delete";
+                    buttonDelete.addEventListener("click", function () {
+                        map.removeLayer(selectedLayer);
+                    });
+                    var name = document.createElement("p");
+                    name.innerHTML = markerData.name;
+                    var content = document.createElement("div");
+                    content.appendChild(name);
+                    content.appendChild(buttonDelete);
+                    marker.bindPopup(content).addTo(map);
+                    manyNodes++;
                     // Push new marker to nodes
                     nodes.push(marker);
-                    // Add mouseover and mouseout listener to marker
-                    marker.on("mouseover", function () {
-                        marker.openPopup();
-                    });
-                    marker.on("mouseout", function () {
-                        marker.closePopup();
-                    });
                     // Add dragend listener to marker
                     marker.on("dragend", function () {
                         // Remove all current paths from map and array
@@ -123,11 +131,11 @@ fileInput.addEventListener("change", function (event) {
                         paths = [];
                         // Recreate all path with updated markers
                         for (var i = 0; i < matrix.length; i++) {
-                            var _loop_3 = function (j) {
+                            for (var j = i; j < matrix[0].length; j++) {
                                 // If edge exists
                                 if (matrix[i][j] != 0) {
                                     // Create polyline as path
-                                    var polyline_2 = L.polyline([nodes[i].getLatLng(), nodes[j].getLatLng()], {
+                                    var polyline = L.polyline([nodes[i].getLatLng(), nodes[j].getLatLng()], {
                                         color: "blue",
                                     }).addTo(map);
                                     // Calculate distance
@@ -135,51 +143,51 @@ fileInput.addEventListener("change", function (event) {
                                         1000;
                                     // Create popup content with distance
                                     var popupContent = "Distance: " + distance.toFixed(4) + " km";
-                                    polyline_2.bindPopup(popupContent);
-                                    // Add mouseover and mouseout listener to polyline
-                                    polyline_2.on("mouseover", function () {
-                                        polyline_2.openPopup();
+                                    var buttonDelete_2 = document.createElement("button");
+                                    buttonDelete_2.innerHTML = "Delete";
+                                    buttonDelete_2.addEventListener("click", function () {
+                                        map.removeLayer(selectedLayer);
                                     });
-                                    polyline_2.on("mouseout", function () {
-                                        polyline_2.closePopup();
-                                    });
+                                    var name_2 = document.createElement("p");
+                                    name_2.innerHTML = popupContent;
+                                    var content_2 = document.createElement("div");
+                                    content_2.appendChild(name_2);
+                                    content_2.appendChild(buttonDelete_2);
+                                    polyline.bindPopup(content_2);
                                     // Push new polyline to array
-                                    paths.push(polyline_2);
+                                    paths.push(polyline);
                                 }
-                            };
-                            for (var j = 0; j < matrix[0].length; j++) {
-                                _loop_3(j);
                             }
                         }
                     });
                 });
                 // Add paths to the map
                 for (var i = 0; i < graphData.matrix.length; i++) {
-                    var _loop_2 = function (j) {
+                    for (var j = i; j < graphData.matrix[0].length; j++) {
                         // If edge exists
                         if (graphData.matrix[i][j] != 0) {
                             // Create polyline as path
-                            var polyline_3 = L.polyline([nodes[i].getLatLng(), nodes[j].getLatLng()], {
+                            var polyline = L.polyline([nodes[i].getLatLng(), nodes[j].getLatLng()], {
                                 color: "blue",
                             }).addTo(map);
                             // Calculate distance
                             var distance = nodes[i].getLatLng().distanceTo(nodes[j].getLatLng()) / 1000;
                             // Create popup content with distance
                             var popupContent = "Distance: " + distance.toFixed(4) + " km";
-                            polyline_3.bindPopup(popupContent);
-                            // Add mouseover and mouseout listener to polyline
-                            polyline_3.on("mouseover", function () {
-                                polyline_3.openPopup();
+                            var buttonDelete = document.createElement("button");
+                            buttonDelete.innerHTML = "Delete";
+                            buttonDelete.addEventListener("click", function () {
+                                map.removeLayer(selectedLayer);
                             });
-                            polyline_3.on("mouseout", function () {
-                                polyline_3.closePopup();
-                            });
+                            var name_3 = document.createElement("p");
+                            name_3.innerHTML = popupContent;
+                            var content = document.createElement("div");
+                            content.appendChild(name_3);
+                            content.appendChild(buttonDelete);
+                            polyline.bindPopup(content);
                             // Push new polyline to array
-                            paths.push(polyline_3);
+                            paths.push(polyline);
                         }
-                    };
-                    for (var j = 0; j < graphData.matrix[0].length; j++) {
-                        _loop_2(j);
                     }
                 }
                 // Set matrix from file
@@ -201,4 +209,8 @@ fileInput.addEventListener("change", function (event) {
 // Navigation behaviour
 window.addEventListener("hashchange", function () {
     window.scrollTo(window.scrollX, window.scrollY - 100);
+});
+map.on("popupopen", function (e) {
+    //@ts-ignore
+    selectedLayer = e.popup._source;
 });

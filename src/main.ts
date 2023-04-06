@@ -3,6 +3,7 @@ let manyNodes = 0;
 let nodes: L.Marker[] = [];
 let paths: L.Polyline[] = [];
 let matrix: number[][];
+let selectedLayer: L.Layer;
 
 // Create map
 const map = L.map("map", { doubleClickZoom: false }).setView(
@@ -22,9 +23,20 @@ map.on("dblclick", (e) => {
   // Increment amount of nodes
   manyNodes++;
 
+  let buttonDelete = document.createElement("button");
+  buttonDelete.innerHTML = "Delete";
+  buttonDelete.addEventListener("click", () => {
+    map.removeLayer(selectedLayer);
+  });
+  let name = document.createElement("p");
+  name.innerHTML = manyNodes.toString();
+  let content = document.createElement("div");
+  content.appendChild(name);
+  content.appendChild(buttonDelete);
+
   // Create new marker
   let marker: L.Marker = L.marker(e.latlng, { draggable: true })
-    .bindPopup(manyNodes.toString())
+    .bindPopup(content)
     .addTo(map)
     .openPopup();
 
@@ -39,7 +51,7 @@ map.on("dblclick", (e) => {
 
     // Recreate all path with updated markers
     for (let i = 0; i < matrix.length; i++) {
-      for (let j = 0; j < matrix[0].length; j++) {
+      for (let j = i; j < matrix[0].length; j++) {
         // If edge exists
         if (matrix[i][j] != 0) {
           // Create polyline as path
@@ -56,16 +68,17 @@ map.on("dblclick", (e) => {
 
           // Create popup content with distance
           let popupContent: string = "Distance: " + distance.toFixed(4) + " km";
-          polyline.bindPopup(popupContent);
-
-          // Add mouseover and mouseout listener to polyline
-          polyline.on("mouseover", () => {
-            polyline.openPopup();
+          let buttonDelete = document.createElement("button");
+          buttonDelete.innerHTML = "Delete";
+          buttonDelete.addEventListener("click", () => {
+            map.removeLayer(selectedLayer);
           });
-
-          polyline.on("mouseout", () => {
-            polyline.closePopup();
-          });
+          let name = document.createElement("p");
+          name.innerHTML = popupContent;
+          let content = document.createElement("div");
+          content.appendChild(name);
+          content.appendChild(buttonDelete);
+          polyline.bindPopup(content);
 
           // Push new polyline to array
           paths.push(polyline);
@@ -76,14 +89,6 @@ map.on("dblclick", (e) => {
 
   // Add new marker to nodes
   nodes.push(marker);
-
-  // Add mouseover and mouseout listener to marker
-  marker.on("mouseover", () => {
-    marker.openPopup();
-  });
-  marker.on("mouseout", () => {
-    marker.closePopup();
-  });
 });
 
 // Restart Button
@@ -133,18 +138,21 @@ fileInput.addEventListener("change", (event) => {
           const marker = L.marker([markerData.latitude, markerData.longitude], {
             draggable: true,
           });
-          marker.bindPopup(markerData.name).addTo(map);
+          let buttonDelete = document.createElement("button");
+          buttonDelete.innerHTML = "Delete";
+          buttonDelete.addEventListener("click", () => {
+            map.removeLayer(selectedLayer);
+          });
+          let name = document.createElement("p");
+          name.innerHTML = markerData.name;
+          let content = document.createElement("div");
+          content.appendChild(name);
+          content.appendChild(buttonDelete);
+          marker.bindPopup(content).addTo(map);
+          manyNodes++;
 
           // Push new marker to nodes
           nodes.push(marker);
-
-          // Add mouseover and mouseout listener to marker
-          marker.on("mouseover", () => {
-            marker.openPopup();
-          });
-          marker.on("mouseout", () => {
-            marker.closePopup();
-          });
 
           // Add dragend listener to marker
           marker.on("dragend", () => {
@@ -157,7 +165,7 @@ fileInput.addEventListener("change", (event) => {
 
             // Recreate all path with updated markers
             for (let i = 0; i < matrix.length; i++) {
-              for (let j = 0; j < matrix[0].length; j++) {
+              for (let j = i; j < matrix[0].length; j++) {
                 // If edge exists
                 if (matrix[i][j] != 0) {
                   // Create polyline as path
@@ -176,16 +184,17 @@ fileInput.addEventListener("change", (event) => {
                   // Create popup content with distance
                   let popupContent: string =
                     "Distance: " + distance.toFixed(4) + " km";
-                  polyline.bindPopup(popupContent);
-
-                  // Add mouseover and mouseout listener to polyline
-                  polyline.on("mouseover", () => {
-                    polyline.openPopup();
+                  let buttonDelete = document.createElement("button");
+                  buttonDelete.innerHTML = "Delete";
+                  buttonDelete.addEventListener("click", () => {
+                    map.removeLayer(selectedLayer);
                   });
-
-                  polyline.on("mouseout", () => {
-                    polyline.closePopup();
-                  });
+                  let name = document.createElement("p");
+                  name.innerHTML = popupContent;
+                  let content = document.createElement("div");
+                  content.appendChild(name);
+                  content.appendChild(buttonDelete);
+                  polyline.bindPopup(content);
 
                   // Push new polyline to array
                   paths.push(polyline);
@@ -197,7 +206,7 @@ fileInput.addEventListener("change", (event) => {
 
         // Add paths to the map
         for (let i = 0; i < graphData.matrix.length; i++) {
-          for (let j = 0; j < graphData.matrix[0].length; j++) {
+          for (let j = i; j < graphData.matrix[0].length; j++) {
             // If edge exists
             if (graphData.matrix[i][j] != 0) {
               // Create polyline as path
@@ -215,16 +224,17 @@ fileInput.addEventListener("change", (event) => {
               // Create popup content with distance
               let popupContent: string =
                 "Distance: " + distance.toFixed(4) + " km";
-              polyline.bindPopup(popupContent);
-
-              // Add mouseover and mouseout listener to polyline
-              polyline.on("mouseover", () => {
-                polyline.openPopup();
+              let buttonDelete = document.createElement("button");
+              buttonDelete.innerHTML = "Delete";
+              buttonDelete.addEventListener("click", () => {
+                map.removeLayer(selectedLayer);
               });
-
-              polyline.on("mouseout", () => {
-                polyline.closePopup();
-              });
+              let name = document.createElement("p");
+              name.innerHTML = popupContent;
+              let content = document.createElement("div");
+              content.appendChild(name);
+              content.appendChild(buttonDelete);
+              polyline.bindPopup(content);
 
               // Push new polyline to array
               paths.push(polyline);
@@ -256,4 +266,9 @@ fileInput.addEventListener("change", (event) => {
 // Navigation behaviour
 window.addEventListener("hashchange", function () {
   window.scrollTo(window.scrollX, window.scrollY - 100);
+});
+
+map.on("popupopen", (e) => {
+  //@ts-ignore
+  selectedLayer = e.popup._source;
 });
