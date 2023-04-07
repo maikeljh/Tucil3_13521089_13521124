@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var L = require("leaflet");
 // Global variables
 var manyNodes = 0;
 var nodes = [];
@@ -208,7 +211,7 @@ fileInput.addEventListener("change", function (event) {
 });
 // Navigation behaviour
 window.addEventListener("hashchange", function () {
-    window.scrollTo(window.scrollX, window.scrollY - 100);
+    window.scrollTo(window.scrollX, window.scrollY - 300);
 });
 map.on("popupopen", function (e) {
     //@ts-ignore

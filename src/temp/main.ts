@@ -1,3 +1,5 @@
+import * as L from "leaflet";
+
 // Global variables
 let manyNodes = 0;
 let nodes: L.Marker[] = [];
