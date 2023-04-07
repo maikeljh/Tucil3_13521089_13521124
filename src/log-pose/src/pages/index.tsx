@@ -36,13 +36,54 @@ export default function Home() {
           </li>
         </ul>
       </nav>
-      <div id="features" className="mt-8 text-center h-[90vh]">
-        <h1 className="font-bold text-3xl mb-10">SPEEDRUN GAK SIH</h1>
-        <Map />
-        <input type="file" id="fileInput" />
-        <button id="restart" className="mt-10 border-2 py-2 px-4 border-black">
-          Restart
-        </button>
+      <div
+        id="features"
+        className="mt-8 text-center h-[90vh] flex flex-row gap-10"
+      >
+        <div className="w-1/2">
+          <h1 className="font-bold text-3xl mb-10">MAP</h1>
+          <Map />
+          <input type="file" id="fileInput" />
+          <button
+            id="ucs"
+            className="mt-10 border-2 py-2 px-4 border-black mr-4"
+          >
+            UCS
+          </button>
+          <button
+            id="restart"
+            className="mt-10 border-2 py-2 px-4 border-black"
+          >
+            Restart
+          </button>
+        </div>
+        <div className="w-1/2 flex flex-col gap-10">
+          <div className="flex flex-col">
+            <h1 className="font-bold text-3xl mb-4">CHOOSE START & GOAL</h1>
+            <div className="flex flex-row gap-20 mx-auto">
+              <div className="flex flex-col">
+                <h2>Start Node</h2>
+                <select id="start-node"></select>
+              </div>
+              <div className="flex flex-col">
+                <h2>Goal Node</h2>
+                <select id="goal-node"></select>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h1 className="font-bold text-3xl mb-10">ROUTE</h1>
+            <div className="bg-white w-2/3 mx-auto shadow-lg rounded-xl p-4 min-h-[5rem]">
+              <p className="text-lg my-auto font-semibold" id="route"></p>
+            </div>
+          </div>
+          <div>
+            <h1 className="font-bold text-3xl mb-10">DISTANCE</h1>
+            <div className="bg-white w-2/3 mx-auto shadow-lg rounded-xl p-4 min-h-[5rem]">
+              <p className="text-lg my-auto font-semibold" id="distance"></p>
+            </div>
+          </div>
+        </div>
       </div>
       <div id="contact-us" className="mb-12 flex flex-col gap-10">
         <h1 className="text-center text-6xl font-bold">CONTACT US</h1>
