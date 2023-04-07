@@ -89,7 +89,7 @@ class UniformCostSearch implements SearchAlgorithm {
         for (let i = 0; i < route.length - 1; i++) {
             ret = ret + route[i].getApproxDistance(route[i+1]);
         }
-        return ret;
+        return ret / 1000;
     }
 }
 

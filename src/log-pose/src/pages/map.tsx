@@ -5,13 +5,22 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet/dist/leaflet.css";
 import { UniformCostSearch } from "../algorithms/UniformCostSearch";
 import { Simpul } from "../algorithms/Simpul";
+import { AStar } from "@/algorithms/AStar";
 
 const Map = () => {
   useEffect(() => {
+    // Scroll window to top
+    window.scrollTo(0, 0);
+
+    // Get Map Container
     var container = L.DomUtil.get("map");
+
+    // Get Start Select Element
     var selectStart: HTMLSelectElement = document.getElementById(
       "start-node"
     ) as HTMLSelectElement;
+
+    // Get Goal Select Element
     var selectGoal: HTMLSelectElement = document.getElementById(
       "goal-node"
     ) as HTMLSelectElement;
@@ -93,6 +102,21 @@ const Map = () => {
         "ucs"
       ) as HTMLButtonElement;
 
+      // A* Button
+      const AStarButton: HTMLButtonElement = document.getElementById(
+        "a*"
+      ) as HTMLButtonElement;
+
+      // Route Display
+      let routeHTML: HTMLParagraphElement = document.getElementById(
+        "route"
+      ) as HTMLParagraphElement;
+
+      // Distance Display
+      let distanceHTML: HTMLParagraphElement = document.getElementById(
+        "distance"
+      ) as HTMLParagraphElement;
+
       // Function to compare two latlng object
       const compareLatLng = (obj1: L.LatLng, obj2: L.LatLng) => {
         return obj1.lat == obj2.lat && obj1.lng == obj2.lng;
@@ -126,8 +150,8 @@ const Map = () => {
         });
       };
 
-      // UCS Event
-      UCSButton.addEventListener("click", () => {
+      // Function to trigger UCS
+      const triggerUCS = () => {
         // Restart all markers and paths
         restartDefaultMarker();
         restartDefaultPolyline();
@@ -176,16 +200,11 @@ const Map = () => {
           }
 
           // Set route value
-          let routeHTML: HTMLParagraphElement = document.getElementById(
-            "route"
-          ) as HTMLParagraphElement;
           routeHTML.innerText = route;
 
           // Set distance value
-          let distanceHTML: HTMLParagraphElement = document.getElementById(
-            "distance"
-          ) as HTMLParagraphElement;
-          distanceHTML.innerText = UCS.getOptimalDistance(result).toString();
+          distanceHTML.innerText =
+            UCS.getOptimalDistance(result).toFixed(5).toString() + " km";
 
           // Set start node to green marker and goal node to red marker
           markers.forEach((simpul) => {
@@ -258,6 +277,151 @@ const Map = () => {
             }
           }
         }
+      };
+
+      // Function to trigger UCS
+      const triggerAStar = () => {
+        // Restart all markers and paths
+        restartDefaultMarker();
+        restartDefaultPolyline();
+
+        // Get Start and Goal Node
+        let startNode = findNodeByName(selectStart.value);
+        let goalNode = findNodeByName(selectGoal.value);
+
+        // Create temporary node
+        startNode = new Simpul(
+          startNode.id,
+          startNode.name,
+          startNode.latitude,
+          startNode.longitude
+        );
+
+        goalNode = new Simpul(
+          goalNode.id,
+          goalNode.name,
+          goalNode.latitude,
+          goalNode.longitude
+        );
+
+        // Init neighbours start and goal node
+        startNode.initNeighbors(matrix, nodes);
+        goalNode.initNeighbors(matrix, nodes);
+
+        // Construct A*
+        let Astar = new AStar(startNode, goalNode, JSONFile);
+
+        // Search UCS
+        let result = Astar.search();
+
+        // If result exists
+        if (result) {
+          // Create route variable
+          let route = "";
+
+          // Create route string
+          for (let i = 0; i < result.length; i++) {
+            if (i != result.length - 1) {
+              route += result[i].name + " - ";
+            } else {
+              route += result[i].name;
+            }
+          }
+
+          // Set route value
+          let routeHTML: HTMLParagraphElement = document.getElementById(
+            "route"
+          ) as HTMLParagraphElement;
+          routeHTML.innerText = route;
+
+          // Set distance value
+          let distanceHTML: HTMLParagraphElement = document.getElementById(
+            "distance"
+          ) as HTMLParagraphElement;
+          distanceHTML.innerText =
+            Astar.getOptimalDistance(result).toFixed(5).toString() + " km";
+
+          // Set start node to green marker and goal node to red marker
+          markers.forEach((simpul) => {
+            if (
+              simpul.getLatLng().lng == startNode.longitude &&
+              simpul.getLatLng().lat == startNode.latitude
+            ) {
+              simpul.setIcon(
+                L.icon({
+                  iconUrl:
+                    "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+                  shadowUrl:
+                    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/images/marker-shadow.png",
+                  iconSize: [25, 41],
+                  iconAnchor: [12, 41],
+                  popupAnchor: [1, -34],
+                  shadowSize: [41, 41],
+                })
+              );
+            } else if (
+              simpul.getLatLng().lng == goalNode.longitude &&
+              simpul.getLatLng().lat == goalNode.latitude
+            ) {
+              simpul.setIcon(
+                L.icon({
+                  iconUrl:
+                    "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+                  shadowUrl:
+                    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/images/marker-shadow.png",
+                  iconSize: [25, 41],
+                  iconAnchor: [12, 41],
+                  popupAnchor: [1, -34],
+                  shadowSize: [41, 41],
+                })
+              );
+            }
+          });
+
+          // Change solution path colors
+          for (let i = 0; i < result.length - 1; i++) {
+            for (let j = 0; j < paths.length; j++) {
+              // Get latlng object from path
+              let latlong1 = paths[j].getLatLngs()[0];
+              let latlong2 = paths[j].getLatLngs()[1];
+
+              // Create latlng object from first node
+              let latlongFirstNode = new L.LatLng(
+                result[i].latitude,
+                result[i].longitude
+              );
+
+              // Create latlng object from second node
+              let latlongDestNode = new L.LatLng(
+                result[i + 1].latitude,
+                result[i + 1].longitude
+              );
+
+              // Compare latlng objects with nodes
+              if (
+                compareLatLng(latlong1, latlongFirstNode) &&
+                compareLatLng(latlong2, latlongDestNode)
+              ) {
+                paths[j].setStyle({ color: "green" });
+              } else if (
+                compareLatLng(latlong2, latlongFirstNode) &&
+                compareLatLng(latlong1, latlongDestNode)
+              ) {
+                paths[j].setStyle({ color: "green" });
+              }
+            }
+          }
+        }
+      };
+
+      // UCS Event
+      UCSButton.addEventListener("click", () => {
+        triggerUCS();
+      });
+
+      // A* Event
+      AStarButton.addEventListener("click", () => {
+        triggerAStar();
       });
 
       // Restart Button
@@ -278,6 +442,10 @@ const Map = () => {
         markers = [];
         nodes = [];
         paths = [];
+        selectStart.innerHTML = "";
+        selectGoal.innerHTML = "";
+        routeHTML.innerHTML = "";
+        distanceHTML.innerHTML = "";
 
         fileInput.value = "";
       };
