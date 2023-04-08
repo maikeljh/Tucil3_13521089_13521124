@@ -76,7 +76,7 @@ class AStar implements SearchAlgorithm {
                 // Get g(n)
                 let gn: number = 0;
                 for (let j = 0; j < nextRoute.length - 1; j++) {
-                    gn += nextRoute[j].listOfNeighbours[nextRoute[j+1]]
+                    gn += nextRoute[j].listOfNeighbours[nextRoute[j+1].id-1]
                 }
                 // Get h(n)
                 let hn: number = Number(this.distanceList[neighborIdx]);
@@ -90,14 +90,16 @@ class AStar implements SearchAlgorithm {
                     }
                     let newRoute = [...currentRoute];
                     newRoute.push(currentNode);
-                    openList.enqueue(gn + hn, this.listofNodes[neighborIdx], newRoute);
+                    openList.enqueue(gn + hn, this.listofNodes[neighborIdx], nextRoute);
                 }
             }
         }
         // Check if found or not
         let route: Simpul[] = []
         if (found) {
-            route = currentRoute;
+            currentRoute.forEach(element => {
+                route.push(element);
+            });
             route.push(currentNode);
         }
 
