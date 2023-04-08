@@ -6,7 +6,7 @@ const About = () => {
         <h1 className="text-5xl mb-4">ABOUT & HOW TO USE</h1>
         <hr className="border-[2px] border-black w-1/2 mb-4"></hr>
         <div className="flex flex-col text-2xl gap-4">
-          <p>
+          <p className="text-justify">
             Hello, this is our simple mini-application made for Tucil 3 IF2211
             Strategi Algoritma 2022/2023. We are from Informatics Engineering
             STEI ITB. We are really happy that we can develop this application

@@ -11,7 +11,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex flex-row bg-white drop-shadow-lg sticky top-0 z-[99999]">
+    <nav className="flex flex-row bg-white drop-shadow-lg sticky top-0 z-[9999]">
       <div className="flex flex-row justify-content items-center px-8 gap-4">
         <Image src={LogPose} className="w-[2rem]" alt="" />
         <h2 className="text-2xl font-bold tracking-widest">LOG POSE</h2>

@@ -18,6 +18,14 @@ class Simpul {
         this.longitude = longitude;
     }
 
+    setLatitude(latitude: number) {
+        this.latitude = latitude;
+    }
+
+    setLongitude(longitude: number) {
+        this.longitude = longitude;
+    }
+    
     toString(): String {
         return `id: ${this.id}, name: ${this.name}, lowest_cost: ${this.lowest_cost}, latitude: ${this.latitude}, longitude: ${this.longitude}`;
     }

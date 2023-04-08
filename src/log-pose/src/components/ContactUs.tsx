@@ -8,7 +8,7 @@ const ContactUs = () => {
   return (
     <div id="contact-us" className="mb-12 flex flex-col gap-10">
       <div className="mt-[4rem]"></div>
-      <h1 className="text-center text-6xl font-bold">CONTACT US</h1>
+      <h1 className="text-center text-6xl">CONTACT US</h1>
       <div className="bg-white rounded-xl flex flex-row w-5/6 mx-auto p-8 items-center gap-16 shadow-4 shadow-black drop-shadow-lg">
         <div className="">
           <Image src={Ken} alt="" width={300} />

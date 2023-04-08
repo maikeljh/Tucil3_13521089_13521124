@@ -21,3 +21,8 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+select {
+  max-height: 5rem;
+  overflow-y: auto;
+}

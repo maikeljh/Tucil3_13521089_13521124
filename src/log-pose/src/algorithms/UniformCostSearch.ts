@@ -8,16 +8,15 @@ class UniformCostSearch implements SearchAlgorithm {
     listofNodes: Simpul[];
     adjacencyMatrix: Number[][];
 
-    constructor(startNode: Simpul, goalNode: Simpul, json: string) {
+    constructor(startNode: Simpul, goalNode: Simpul, nodes: Simpul[], matrix: number[][]) {
         this.startNode = startNode;
         this.goalNode = goalNode;
-        const obj = JSON.parse(json);
-        this.adjacencyMatrix = obj.matrix;
+        this.adjacencyMatrix = matrix;
         this.listofNodes = [];
-        for (let i = 0; i < obj.nodes.length; i++) {
-            this.listofNodes.push(new Simpul(obj.nodes[i].id, obj.nodes[i].name, obj.nodes[i].latitude, obj.nodes[i].longitude));
+        for (let i = 0; i < nodes.length; i++) {
+            this.listofNodes.push(new Simpul(nodes[i].id, nodes[i].name, nodes[i].latitude, nodes[i].longitude));
         }
-        for (let i = 0; i < obj.nodes.length; i++) {
+        for (let i = 0; i < nodes.length; i++) {
             this.listofNodes[i].initNeighbors(this.adjacencyMatrix, this.listofNodes);
         }
     }
@@ -47,9 +46,9 @@ class UniformCostSearch implements SearchAlgorithm {
         let found = false;
 
         while (openList.size() > 0 && !found) {
-            current = openList.dequeue();
-            currentCost = current[0];
-            currentNode = current[1];
+            current = openList.dequeue(); // @ts-ignore
+            currentCost = current[0]; // @ts-ignore
+            currentNode = current[1]; // @ts-ignore
             currentRoute = current[2];
             this.listofNodes[currentNode.id - 1].visited = true;
             found = currentNode.id === this.goalNode.id;
@@ -76,8 +75,8 @@ class UniformCostSearch implements SearchAlgorithm {
         }
         // Check if found or not
         let route: Simpul[] = [];
-        if (found) {
-            route = currentRoute;
+        if (found) { // @ts-ignore
+            route = currentRoute; // @ts-ignore
             route.push(currentNode);
         }
 

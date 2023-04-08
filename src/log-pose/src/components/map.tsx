@@ -6,35 +6,86 @@ import "leaflet/dist/leaflet.css";
 import { UniformCostSearch } from "../algorithms/UniformCostSearch";
 import { Simpul } from "../algorithms/Simpul";
 import { AStar } from "@/algorithms/AStar";
+import "react-toastify/dist/ReactToastify.min.css";
+import { toast } from "react-toastify";
 
 const Map = () => {
   useEffect(() => {
+    /* HTML Elements */
+    // Start Select Element
+    let selectStart: HTMLSelectElement = document.getElementById(
+      "start-node"
+    ) as HTMLSelectElement;
+
+    // Goal Select Element
+    let selectGoal: HTMLSelectElement = document.getElementById(
+      "goal-node"
+    ) as HTMLSelectElement;
+
+    // Start Select Element
+    let selectFirst: HTMLSelectElement = document.getElementById(
+      "first-node"
+    ) as HTMLSelectElement;
+
+    // Goal Select Element
+    let selectSecond: HTMLSelectElement = document.getElementById(
+      "second-node"
+    ) as HTMLSelectElement;
+
+    // UCS Button
+    let UCSButton: HTMLButtonElement = document.getElementById(
+      "ucs"
+    ) as HTMLButtonElement;
+
+    // A* Button
+    let AStarButton: HTMLButtonElement = document.getElementById(
+      "a*"
+    ) as HTMLButtonElement;
+
+    // Restart Button
+    let restartButton: HTMLButtonElement = document.getElementById(
+      "restart"
+    ) as HTMLButtonElement;
+
+    // Add Path Button
+    let addPathButton: HTMLButtonElement = document.getElementById(
+      "add-path"
+    ) as HTMLButtonElement;
+
+    // Route Display
+    let routeHTML: HTMLParagraphElement = document.getElementById(
+      "route"
+    ) as HTMLParagraphElement;
+
+    // Distance Display
+    let distanceHTML: HTMLParagraphElement = document.getElementById(
+      "distance"
+    ) as HTMLParagraphElement;
+
+    // File Input
+    let fileInput: HTMLInputElement = document.getElementById(
+      "fileInput"
+    ) as HTMLInputElement;
+
     // Scroll window to top
     window.scrollTo(0, 0);
 
     // Get Map Container
     var container = L.DomUtil.get("map");
 
-    // Get Start Select Element
-    var selectStart: HTMLSelectElement = document.getElementById(
-      "start-node"
-    ) as HTMLSelectElement;
-
-    // Get Goal Select Element
-    var selectGoal: HTMLSelectElement = document.getElementById(
-      "goal-node"
-    ) as HTMLSelectElement;
-
+    // Construct Map
     if (container != null && container.hasChildNodes() == false) {
-      // Initialize Variables
+      /* Variables */
       let manyNodes = 0;
       let markers: L.Marker[] = [];
       let nodes: Simpul[] = [];
       let paths: L.Polyline[] = [];
-      let matrix: number[][];
+      let matrix: number[][] = [];
       let selectedLayer: L.Layer;
-      let JSONFile: string;
+      let active: boolean = false;
+      let currentAlgorithm: string;
 
+      /* Construct Map */
       // Create Map
       const map = L.map("map", { doubleClickZoom: false }).setView(
         [-6.88792, 107.61033],
@@ -48,74 +99,152 @@ const Map = () => {
           '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(map);
 
-      // Create new node when double click
-      map.on("dblclick", (e) => {
-        // Increment amount of markers
-        manyNodes++;
+      /* Functions */
+      // Function to update matrix after add simpul
+      const updateMatrixAddSimpul = () => {
+        let newRow = [];
+        for (let i = 0; i < matrix.length; i++) {
+          matrix[i].push(0);
+          newRow.push(0);
+        }
+        newRow.push(0);
+        matrix.push(newRow);
+      };
 
-        // Create Delete Button
-        let buttonDelete = document.createElement("button");
-        buttonDelete.innerHTML = "Delete";
-        buttonDelete.addEventListener("click", () => {
-          map.removeLayer(selectedLayer);
-        });
+      // Function to update matrix after delete simpul
+      const updateMatrixDeleteSimpul = (simpul: Simpul) => {
+        for (let i = 0; i < matrix.length; i++) {
+          matrix[i][simpul.id - 1] = 0;
+          matrix[simpul.id - 1][i] = 0;
+        }
+        for (let i = 0; i < nodes.length; i++) {
+          if (nodes[i].id == simpul.id) {
+            nodes[i] = new Simpul(simpul.id, "deleted", 0, 0);
+          }
+        }
+      };
 
-        // Create Marker Name
-        let name = document.createElement("p");
-        name.innerHTML = manyNodes.toString();
+      // Function update matrix after add path
+      const updateMatrixAddPath = (i: number, j: number) => {
+        matrix[i][j] = 1;
+        matrix[j][i] = 1;
+      };
 
-        // Create Content Popup
-        let content = document.createElement("div");
-        content.appendChild(name);
-        content.appendChild(buttonDelete);
+      // Function update matrix after delete path
+      const updateMatrixDeletePath = (i: number, j: number) => {
+        matrix[i][j] = 0;
+        matrix[j][i] = 0;
+      };
 
-        // Create new option to select element
-        createOption(manyNodes.toString());
+      // Function to update simpul
+      const updateSimpul = (name: String, lat: number, lng: number) => {
+        for (let i = 0; i < nodes.length; i++) {
+          if (nodes[i].name === name) {
+            nodes[i].setLatitude(lat);
+            nodes[i].setLongitude(lng);
+            break;
+          }
+        }
+      };
 
-        // Create new marker
-        let marker: L.Marker = L.marker(e.latlng, { draggable: true })
-          .bindPopup(content)
-          .addTo(map)
-          .openPopup();
+      // Function to handle delete simpul
+      const deleteSimpul = (simpul: Simpul) => {
+        updateMatrixDeleteSimpul(simpul);
+        redrawPaths();
+        if (active) {
+          restartDefaultMarker();
+          if (
+            selectStart.value === simpul.name ||
+            selectGoal.value === simpul.name
+          ) {
+            routeHTML.innerHTML = "";
+            distanceHTML.innerHTML = "";
+            active = false;
+            currentAlgorithm = "";
+          } else {
+            if (currentAlgorithm == "UCS") {
+              triggerUCS();
+            } else {
+              triggerAStar();
+            }
+          }
+        }
 
-        // Push new Simpul to list of nodes
-        nodes.push(
-          new Simpul(
-            manyNodes,
-            manyNodes.toString(),
-            marker.getLatLng().lat,
-            marker.getLatLng().lng
-          )
+        // Get option elements
+        let select1 = selectStart.querySelector(
+          `option[value="${simpul.name.toString()}"]`
         );
 
-        // Add dragend listener to marker
-        marker.on("dragend", () => {
-          redrawPaths();
-        });
+        let select2 = selectGoal.querySelector(
+          `option[value="${simpul.name.toString()}"]`
+        );
 
-        // Add new marker to markers
-        markers.push(marker);
-      });
+        let select3 = selectFirst.querySelector(
+          `option[value="${simpul.name.toString()}"]`
+        );
 
-      // UCS Button
-      const UCSButton: HTMLButtonElement = document.getElementById(
-        "ucs"
-      ) as HTMLButtonElement;
+        let select4 = selectSecond.querySelector(
+          `option[value="${simpul.name.toString()}"]`
+        );
 
-      // A* Button
-      const AStarButton: HTMLButtonElement = document.getElementById(
-        "a*"
-      ) as HTMLButtonElement;
+        // Remove option elements
+        select1?.remove();
+        select2?.remove();
+        select3?.remove();
+        select4?.remove();
+      };
 
-      // Route Display
-      let routeHTML: HTMLParagraphElement = document.getElementById(
-        "route"
-      ) as HTMLParagraphElement;
+      // Function to handle add path
+      const addPath = () => {
+        let firstName = selectFirst.value;
+        let secondName = selectSecond.value;
 
-      // Distance Display
-      let distanceHTML: HTMLParagraphElement = document.getElementById(
-        "distance"
-      ) as HTMLParagraphElement;
+        let firstSimpul = findNodeByName(firstName);
+        let secondSimpul = findNodeByName(secondName);
+
+        updateMatrixAddPath(firstSimpul.id - 1, secondSimpul.id - 1);
+        redrawPaths();
+
+        if (firstName === secondName) {
+          toast.error("Tidak bisa menambahkan rute ke simpul yang sama!", {
+            autoClose: 3000,
+          });
+        } else {
+          toast.success(
+            `Berhasil menambahkan rute dari ${firstName} ke ${secondName}`,
+            {
+              autoClose: 3000,
+            }
+          );
+        }
+
+        if (active) {
+          restartDefaultMarker();
+          if (currentAlgorithm == "UCS") {
+            triggerUCS();
+          } else {
+            triggerAStar();
+          }
+        }
+      };
+
+      // Function to handle delete path
+      const deletePath = (i: number, j: number) => {
+        updateMatrixDeletePath(i, j);
+        redrawPaths();
+        toast.success(
+          `Berhasil menghapus rute dari ${nodes[i].name} ke ${nodes[j].name}`,
+          { autoClose: 3000 }
+        );
+        if (active) {
+          restartDefaultMarker();
+          if (currentAlgorithm == "UCS") {
+            triggerUCS();
+          } else {
+            triggerAStar();
+          }
+        }
+      };
 
       // Function to compare two latlng object
       const compareLatLng = (obj1: L.LatLng, obj2: L.LatLng) => {
@@ -156,6 +285,10 @@ const Map = () => {
         restartDefaultMarker();
         restartDefaultPolyline();
 
+        // Activate algorithm
+        active = true;
+        currentAlgorithm = "UCS";
+
         // Get Start and Goal Node
         let startNode = findNodeByName(selectStart.value);
         let goalNode = findNodeByName(selectGoal.value);
@@ -180,13 +313,17 @@ const Map = () => {
         goalNode.initNeighbors(matrix, nodes);
 
         // Construct UCS
-        let UCS = new UniformCostSearch(startNode, goalNode, JSONFile);
+        let UCS = new UniformCostSearch(startNode, goalNode, nodes, matrix);
 
         // Search UCS
         let result = UCS.search();
 
         // If result exists
-        if (result) {
+        if (result.length > 0) {
+          toast.success("Rute berhasil ditemukan dengan UCS", {
+            autoClose: 3000,
+          });
+
           // Create route variable
           let route = "";
 
@@ -264,18 +401,26 @@ const Map = () => {
 
               // Compare latlng objects with nodes
               if (
-                compareLatLng(latlong1, latlongFirstNode) &&
+                //@ts-ignore
+                compareLatLng(latlong1, latlongFirstNode) && //@ts-ignore
                 compareLatLng(latlong2, latlongDestNode)
               ) {
                 paths[j].setStyle({ color: "green" });
               } else if (
-                compareLatLng(latlong2, latlongFirstNode) &&
+                //@ts-ignore
+                compareLatLng(latlong2, latlongFirstNode) && //@ts-ignore
                 compareLatLng(latlong1, latlongDestNode)
               ) {
                 paths[j].setStyle({ color: "green" });
               }
             }
           }
+        } else {
+          toast.error("Rute tidak ditemukan", {
+            autoClose: 3000,
+          });
+          routeHTML.innerText = "No route";
+          distanceHTML.innerText = "-";
         }
       };
 
@@ -284,6 +429,10 @@ const Map = () => {
         // Restart all markers and paths
         restartDefaultMarker();
         restartDefaultPolyline();
+
+        // Activate algorithm
+        active = true;
+        currentAlgorithm = "A*";
 
         // Get Start and Goal Node
         let startNode = findNodeByName(selectStart.value);
@@ -309,13 +458,17 @@ const Map = () => {
         goalNode.initNeighbors(matrix, nodes);
 
         // Construct A*
-        let Astar = new AStar(startNode, goalNode, JSONFile);
+        let Astar = new AStar(startNode, goalNode, nodes, matrix);
 
         // Search UCS
         let result = Astar.search();
 
         // If result exists
-        if (result) {
+        if (result.length > 0) {
+          toast.success("Rute berhasil ditemukan dengan A*", {
+            autoClose: 3000,
+          });
+
           // Create route variable
           let route = "";
 
@@ -329,15 +482,9 @@ const Map = () => {
           }
 
           // Set route value
-          let routeHTML: HTMLParagraphElement = document.getElementById(
-            "route"
-          ) as HTMLParagraphElement;
           routeHTML.innerText = route;
 
           // Set distance value
-          let distanceHTML: HTMLParagraphElement = document.getElementById(
-            "distance"
-          ) as HTMLParagraphElement;
           distanceHTML.innerText =
             Astar.getOptimalDistance(result).toFixed(5).toString() + " km";
 
@@ -399,37 +546,31 @@ const Map = () => {
 
               // Compare latlng objects with nodes
               if (
-                compareLatLng(latlong1, latlongFirstNode) &&
+                //@ts-ignore
+                compareLatLng(latlong1, latlongFirstNode) && //@ts-ignore
                 compareLatLng(latlong2, latlongDestNode)
               ) {
                 paths[j].setStyle({ color: "green" });
               } else if (
-                compareLatLng(latlong2, latlongFirstNode) &&
+                //@ts-ignore
+                compareLatLng(latlong2, latlongFirstNode) && //@ts-ignore
                 compareLatLng(latlong1, latlongDestNode)
               ) {
                 paths[j].setStyle({ color: "green" });
               }
             }
           }
+        } else {
+          toast.error("Rute tidak ditemukan", {
+            autoClose: 3000,
+          });
+          routeHTML.innerText = "No route";
+          distanceHTML.innerText = "-";
         }
       };
 
-      // UCS Event
-      UCSButton.addEventListener("click", () => {
-        triggerUCS();
-      });
-
-      // A* Event
-      AStarButton.addEventListener("click", () => {
-        triggerAStar();
-      });
-
-      // Restart Button
-      const restartButton: HTMLButtonElement = document.getElementById(
-        "restart"
-      ) as HTMLButtonElement;
-
-      const resetMap = () => {
+      // Function to reset all elements in map
+      const resetMap = (condition: String) => {
         // Reset all markers and polylines
         map.eachLayer((layer) => {
           if (layer instanceof L.Marker || layer instanceof L.Polyline) {
@@ -442,25 +583,213 @@ const Map = () => {
         markers = [];
         nodes = [];
         paths = [];
+
         selectStart.innerHTML = "";
         selectGoal.innerHTML = "";
+        selectFirst.innerHTML = "";
+        selectSecond.innerHTML = "";
         routeHTML.innerHTML = "";
         distanceHTML.innerHTML = "";
 
-        fileInput.value = "";
+        if (condition !== "readFile") {
+          fileInput.value = "";
+        }
       };
 
-      // Restart Function
-      restartButton.addEventListener("click", () => {
-        resetMap();
+      // Function to create new option element
+      const createOption = (name: string) => {
+        let option = document.createElement("option");
+        option.value = name;
+        option.innerHTML = name;
+        selectStart?.appendChild(option);
+
+        let option2 = document.createElement("option");
+        option2.value = name;
+        option2.innerHTML = name;
+        selectGoal?.appendChild(option2);
+
+        let option3 = document.createElement("option");
+        option3.value = name;
+        option3.innerHTML = name;
+        selectFirst?.appendChild(option3);
+
+        let option4 = document.createElement("option");
+        option4.value = name;
+        option4.innerHTML = name;
+        selectSecond?.appendChild(option4);
+      };
+
+      // Function to search node by name
+      const findNodeByName = (name: string) => {
+        for (let i = 0; i < nodes.length; i++) {
+          if (nodes[i].name == name) {
+            return nodes[i];
+          }
+        }
+        return new Simpul(-1, "-1", 0, 0);
+      };
+
+      // Function to redraw all paths
+      const redrawPaths = () => {
+        // Remove all current paths from map and array
+        for (let i = 0; i < paths.length; i++) {
+          map.removeLayer(paths[i]);
+        }
+
+        // Empty list
+        paths = [];
+
+        // Recreate all path with updated markers
+        for (let i = 0; i < matrix.length; i++) {
+          for (let j = i; j < matrix[0].length; j++) {
+            // If edge exists
+            if (matrix[i][j] != 0) {
+              // Create polyline as path
+              const polyline: L.Polyline = L.polyline(
+                [markers[i].getLatLng(), markers[j].getLatLng()],
+                {
+                  color: "blue",
+                }
+              ).addTo(map);
+
+              // Calculate distance
+              let distance: number =
+                markers[i].getLatLng().distanceTo(markers[j].getLatLng()) /
+                1000;
+
+              // Create popup content with distance
+              let popupContent: string =
+                "Distance: " + distance.toFixed(4) + " km";
+
+              // Create Delete Button
+              let buttonDelete = document.createElement("button");
+              buttonDelete.innerHTML = "Delete";
+              buttonDelete.addEventListener("click", () => {
+                map.removeLayer(selectedLayer);
+                deletePath(i, j);
+              });
+
+              // Create Name
+              let name = document.createElement("p");
+              name.innerHTML = popupContent;
+
+              // Create Content
+              let content = document.createElement("div");
+              content.appendChild(name);
+              content.appendChild(buttonDelete);
+
+              // Bind content with popup polyline
+              polyline.bindPopup(content);
+
+              // Push new polyline to array
+              paths.push(polyline);
+            }
+          }
+        }
+      };
+
+      /* Events */
+      // Create new node when double click
+      map.on("dblclick", (e) => {
+        // Increment amount of markers
+        manyNodes++;
+
+        // Create Delete Button
+        let buttonDelete = document.createElement("button");
+        buttonDelete.innerHTML = "Delete";
+
+        // Create Marker Name
+        let name = document.createElement("p");
+        name.innerHTML = manyNodes.toString();
+
+        // Create Content Popup
+        let content = document.createElement("div");
+        content.appendChild(name);
+        content.appendChild(buttonDelete);
+
+        // Create new option to select element
+        createOption(manyNodes.toString());
+
+        // Create new marker
+        let marker: L.Marker = L.marker(e.latlng, { draggable: true })
+          .bindPopup(content)
+          .addTo(map)
+          .openPopup();
+
+        // Push new Simpul to list of nodes
+        let newSimpul = new Simpul(
+          manyNodes,
+          manyNodes.toString(),
+          marker.getLatLng().lat,
+          marker.getLatLng().lng
+        );
+
+        nodes.push(newSimpul);
+
+        // Add click listener to delete button
+        buttonDelete.addEventListener("click", () => {
+          map.removeLayer(selectedLayer);
+          deleteSimpul(newSimpul);
+        });
+
+        // Add dragend listener to marker
+        marker.on("dragend", () => {
+          restartDefaultMarker();
+          redrawPaths();
+          let name = marker
+            .getPopup()
+            ?.getContent() // @ts-ignore
+            ?.querySelector("p").innerHTML;
+          updateSimpul(name, marker.getLatLng().lat, marker.getLatLng().lng);
+          if (active) {
+            if (currentAlgorithm === "UCS") {
+              triggerUCS();
+            } else {
+              triggerAStar();
+            }
+          }
+        });
+
+        // Add new marker to markers
+        markers.push(marker);
+
+        // Update Adjacency Matrix
+        updateMatrixAddSimpul();
       });
 
-      // File Input
-      const fileInput: HTMLInputElement = document.getElementById(
-        "fileInput"
-      ) as HTMLInputElement;
+      // UCS Event
+      UCSButton.addEventListener("click", () => {
+        if (selectStart.value === "" || selectGoal.value === "") {
+          toast.error("Tidak dapat melakukan pencarian rute!");
+        } else {
+          triggerUCS();
+        }
+      });
 
-      // Add event listener to file input
+      // A* Event
+      AStarButton.addEventListener("click", () => {
+        if (selectStart.value === "" || selectGoal.value === "") {
+          toast.error("Tidak dapat melakukan pencarian rute!");
+        } else {
+          triggerAStar();
+        }
+      });
+
+      // Restart Event
+      restartButton.addEventListener("click", () => {
+        resetMap("");
+      });
+
+      // Add Path Event
+      addPathButton.addEventListener("click", () => {
+        if (selectFirst.value === "" || selectSecond.value === "") {
+          toast.error("Tidak dapat menambahkan path!");
+        } else {
+          addPath();
+        }
+      });
+
+      // File Input Event
       fileInput.addEventListener("change", (event) => {
         if (event.target instanceof HTMLInputElement) {
           // Get File
@@ -468,11 +797,11 @@ const Map = () => {
 
           // If file exists
           if (file) {
+            resetMap("readFile");
             const reader = new FileReader();
             reader.onload = (event) => {
               // Parse JSON File
               const data = event.target?.result as string;
-              JSONFile = data;
               const graphData = JSON.parse(data);
 
               // Add markers to the map
@@ -488,9 +817,6 @@ const Map = () => {
                 // Create Delete Button
                 let buttonDelete = document.createElement("button");
                 buttonDelete.innerHTML = "Delete";
-                buttonDelete.addEventListener("click", () => {
-                  map.removeLayer(selectedLayer);
-                });
 
                 // Create Name
                 let name = document.createElement("p");
@@ -509,21 +835,44 @@ const Map = () => {
 
                 // Increment many nodes and push new Simpul to list of nodes
                 manyNodes++;
-                nodes.push(
-                  new Simpul(
-                    markerData.id,
-                    markerData.name,
-                    markerData.latitude,
-                    markerData.longitude
-                  )
+
+                let newSimpul = new Simpul(
+                  markerData.id,
+                  markerData.name,
+                  markerData.latitude,
+                  markerData.longitude
                 );
+
+                nodes.push(newSimpul);
+
+                buttonDelete.addEventListener("click", () => {
+                  map.removeLayer(selectedLayer);
+                  deleteSimpul(newSimpul);
+                });
 
                 // Push new marker to markers
                 markers.push(marker);
 
                 // Add dragend listener to marker
                 marker.on("dragend", () => {
+                  restartDefaultMarker();
                   redrawPaths();
+                  let name = marker
+                    .getPopup()
+                    ?.getContent() // @ts-ignore
+                    ?.querySelector("p").innerHTML;
+                  updateSimpul(
+                    name,
+                    marker.getLatLng().lat,
+                    marker.getLatLng().lng
+                  );
+                  if (active) {
+                    if (currentAlgorithm === "UCS") {
+                      triggerUCS();
+                    } else {
+                      triggerAStar();
+                    }
+                  }
                 });
               });
 
@@ -555,6 +904,7 @@ const Map = () => {
                     buttonDelete.innerHTML = "Delete";
                     buttonDelete.addEventListener("click", () => {
                       map.removeLayer(selectedLayer);
+                      deletePath(i, j);
                     });
 
                     // Create name
@@ -606,87 +956,6 @@ const Map = () => {
         //@ts-ignore
         selectedLayer = e.popup._source;
       });
-
-      // Function to create new option element
-      const createOption = (name: string) => {
-        let option = document.createElement("option");
-        option.value = name;
-        option.innerHTML = name;
-        selectStart?.appendChild(option);
-
-        let option2 = document.createElement("option");
-        option2.value = name;
-        option2.innerHTML = name;
-        selectGoal?.appendChild(option2);
-      };
-
-      // Function to search node by name
-      const findNodeByName = (name: string) => {
-        for (let i = 0; i < nodes.length; i++) {
-          if (nodes[i].name == name) {
-            return nodes[i];
-          }
-        }
-        return new Simpul(-1, "-1", 0, 0);
-      };
-
-      // Function to redraw all paths
-      const redrawPaths = () => {
-        // Remove all current paths from map and array
-        for (let i = 0; i < paths.length; i++) {
-          map.removeLayer(paths[i]);
-        }
-
-        // Empty list
-        paths = [];
-
-        // Recreate all path with updated markers
-        for (let i = 0; i < matrix.length; i++) {
-          for (let j = i; j < matrix[0].length; j++) {
-            // If edge exists
-            if (matrix[i][j] != 0) {
-              // Create polyline as path
-              const polyline: L.Polyline = L.polyline(
-                [markers[i].getLatLng(), markers[j].getLatLng()],
-                {
-                  color: "blue",
-                }
-              ).addTo(map);
-
-              // Calculate distance
-              let distance: number =
-                markers[i].getLatLng().distanceTo(markers[j].getLatLng()) /
-                1000;
-
-              // Create popup content with distance
-              let popupContent: string =
-                "Distance: " + distance.toFixed(4) + " km";
-
-              // Create Delete Button
-              let buttonDelete = document.createElement("button");
-              buttonDelete.innerHTML = "Delete";
-              buttonDelete.addEventListener("click", () => {
-                map.removeLayer(selectedLayer);
-              });
-
-              // Create Name
-              let name = document.createElement("p");
-              name.innerHTML = popupContent;
-
-              // Create Content
-              let content = document.createElement("div");
-              content.appendChild(name);
-              content.appendChild(buttonDelete);
-
-              // Bind content with popup polyline
-              polyline.bindPopup(content);
-
-              // Push new polyline to array
-              paths.push(polyline);
-            }
-          }
-        }
-      };
     }
   }, []);
 

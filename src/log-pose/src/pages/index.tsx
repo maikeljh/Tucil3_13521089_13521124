@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import About from "@/components/About";
 import ContactUs from "@/components/ContactUs";
 import Application from "@/components/Application";
+import { ToastContainer } from "react-toastify";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       </Head>
       <Navbar />
       <main>
+        <ToastContainer />
         <Application />
         <About />
         <ContactUs />
