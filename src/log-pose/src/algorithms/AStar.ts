@@ -63,7 +63,7 @@ class AStar implements SearchAlgorithm {
             currentRoute = current[2];
             this.listofNodes[currentNode.id - 1].visited = true;
             found = currentNode.id === this.goalNode.id;
-            for (let i = 0; i < currentNode.listOfNeighbours.length; i++) {
+            for (let i = 0; i < currentNode.listOfNeighbours.length && !found; i++) {
                 // No need to visit if already visited
                 if (!Number.isFinite(currentNode.listOfNeighbours[i])) {
                     continue;
