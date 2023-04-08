@@ -48,7 +48,7 @@ class AStar implements SearchAlgorithm {
         this.startNode.lowest_cost = 0;
 
         let openList = new Prioqueuesimpul();
-        openList.enqueue(Number(this.distanceList[this.startNode.id - 1]), this.startNode, []);
+        openList.enqueue(Number(this.distanceList[this.startNode.id - 1]), this.startNode, [this.startNode]);
 
         let current;
         let currentNode;
@@ -97,10 +97,8 @@ class AStar implements SearchAlgorithm {
         // Check if found or not
         let route: Simpul[] = []
         if (found) {
-            currentRoute.forEach(element => {
-                route.push(element);
-            });
-            route.push(currentNode);
+            route = currentRoute;
+            // route.push(currentNode);
         }
 
         return route;
