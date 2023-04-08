@@ -88,8 +88,6 @@ class AStar implements SearchAlgorithm {
                     if (this.listofNodes[neighborIdx].lowest_cost > gn) {
                         this.listofNodes[neighborIdx].lowest_cost = gn;
                     }
-                    let newRoute = [...currentRoute];
-                    newRoute.push(currentNode);
                     openList.enqueue(gn + hn, this.listofNodes[neighborIdx], nextRoute);
                 }
             }
