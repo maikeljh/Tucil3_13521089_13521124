@@ -7,7 +7,7 @@ const Footer = () => {
     <div className="absolute sticky w-full bottom-0 flex flex-row bg-white shadow-lg py-4 shadow-black">
       <div className="flex flex-row justify-content items-center px-8 gap-4">
         <Image src={Copyright} className="w-[1.5rem]" alt="" />
-        <h2 className="text-2xl font-semibold tracking-widest">
+        <h2 className="text-lg sm:text-2xl font-semibold tracking-widest">
           KELOMPOK 25 - KEN & MIKE
         </h2>
       </div>

@@ -36,7 +36,7 @@ const About = () => {
             </li>
             <li>Press A* or UCS algorithm to find the route.</li>
           </ol>
-          <pre className="text-[1.5rem] mt-6">
+          <pre className="lg:text-[1.5rem] text-[0.75rem] mt-6">
             The example valid JSON format :{"\n"}
             {JSON.stringify(
               {

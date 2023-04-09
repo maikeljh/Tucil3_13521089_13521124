@@ -9,12 +9,14 @@ const ContactUs = () => {
     <div id="contact-us" className="mb-12 flex flex-col gap-10">
       <div className="mt-[4rem]"></div>
       <h1 className="text-center text-6xl">CONTACT US</h1>
-      <div className="bg-white rounded-xl flex flex-row w-5/6 mx-auto p-8 items-center gap-16 shadow-4 shadow-black drop-shadow-lg">
+      <div className="bg-white rounded-xl flex flex-col lg:flex-row w-5/6 mx-auto p-8 items-center gap-8 md:gap-16 shadow-4 shadow-black drop-shadow-lg">
         <div className="">
           <Image src={Ken} alt="" width={300} />
         </div>
         <div className="flex flex-col gap-4">
-          <p className="text-5xl">KENNETH EZEKIEL 13521089</p>
+          <p className="text-2xl md:text-5xl text-center lg:text-left">
+            KENNETH EZEKIEL 13521089
+          </p>
           <hr className="border-2 border-black"></hr>
           <a
             className="flex flex-row items-center gap-4"
@@ -24,7 +26,7 @@ const ContactUs = () => {
             <div>
               <Image src={Instagram} alt="" />
             </div>
-            <p className="text-3xl">@KENNEZEKIEL</p>
+            <p className="text-2xl md:text-3xl">@KENNEZEKIEL</p>
           </a>
           <a
             className="flex flex-row items-center gap-4"
@@ -34,16 +36,18 @@ const ContactUs = () => {
             <div>
               <Image src={Github} alt="" />
             </div>
-            <p className="text-3xl">KENEZEKIEL</p>
+            <p className="text-2xl md:text-3xl">KENEZEKIEL</p>
           </a>
         </div>
       </div>
-      <div className="bg-white rounded-xl flex flex-row w-5/6 mx-auto p-8 items-center gap-16 shadow-4 shadow-black drop-shadow-lg">
+      <div className="bg-white rounded-xl flex flex-col lg:flex-row w-5/6 mx-auto p-8 items-center gap-8 md:gap-16 shadow-4 shadow-black drop-shadow-lg">
         <div className="">
           <Image src={Mike} alt="" width={300} />
         </div>
         <div className="flex flex-col gap-4">
-          <p className="text-5xl">MICHAEL JONATHAN HALIM 13521124</p>
+          <p className="text-2xl md:text-5xl text-center lg:text-left">
+            MICHAEL JONATHAN HALIM 13521124
+          </p>
           <hr className="border-2 border-black"></hr>
           <a
             className="flex flex-row items-center gap-4"
@@ -53,7 +57,7 @@ const ContactUs = () => {
             <div>
               <Image src={Instagram} alt="" />
             </div>
-            <p className="text-3xl">@MICHAEL.JH</p>
+            <p className="text-2xl md:text-3xl">@MICHAEL.JH</p>
           </a>
           <a
             className="flex flex-row items-center gap-4"
@@ -63,7 +67,7 @@ const ContactUs = () => {
             <div>
               <Image src={Github} alt="" />
             </div>
-            <p className="text-3xl">MAIKELJH</p>
+            <p className="text-2xl md:text-3xl">MAIKELJH</p>
           </a>
         </div>
       </div>

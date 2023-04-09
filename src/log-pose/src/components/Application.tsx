@@ -12,9 +12,9 @@ const Application = () => {
   return (
     <div
       id="features"
-      className="mt-6 text-center h-[80vh] flex flex-row gap-10"
+      className="mt-6 text-center xl:h-[80vh] flex flex-col xl:flex-row gap-10"
     >
-      <div className="w-1/2">
+      <div className="xl:w-1/2">
         <div className="flex flex-col gap-4">
           <div className="flex flex-row items-center gap-4 mx-auto justify-content">
             <Image src={IconMap} alt="" width={50} />
@@ -58,7 +58,7 @@ const Application = () => {
           Restart
         </button>
       </div>
-      <div className="w-1/2 flex flex-col gap-10">
+      <div className="xl:w-1/2 flex flex-col gap-10">
         <Tab activeTab={activeTab} setActiveTab={setActiveTab} />
         <div>
           <div className="bg-white w-5/6 mx-auto shadow-lg rounded-xl p-4 min-h-[8rem]">
