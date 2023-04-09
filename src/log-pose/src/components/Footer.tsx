@@ -4,7 +4,7 @@ import ITB from "../../public/img/itb.png";
 
 const Footer = () => {
   return (
-    <div className="absolute sticky w-full bottom-0 flex flex-row bg-white shadow-lg py-4 shadow-black">
+    <div className="absolute sticky w-full bottom-0 flex flex-row bg-white shadow-lg py-4 shadow-black z-[9999]">
       <div className="flex flex-row justify-content items-center px-8 gap-4">
         <Image src={Copyright} className="w-[1.5rem]" alt="" />
         <h2 className="text-lg sm:text-2xl font-semibold tracking-widest">
