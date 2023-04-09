@@ -119,7 +119,9 @@ const Map = () => {
         }
         for (let i = 0; i < nodes.length; i++) {
           if (nodes[i].id == simpul.id) {
-            toast.success(`Berhasil menghapus simpul ${simpul.name}`);
+            toast.success(`Berhasil menghapus simpul ${simpul.name}`, {
+              autoClose: 3000,
+            });
             nodes[i] = new Simpul(simpul.id, "deleted", 0, 0);
           }
         }
@@ -697,7 +699,9 @@ const Map = () => {
       // @ts-ignore
       const validateFile = (graphData) => {
         if (graphData.nodes == undefined || graphData.matrix == undefined) {
-          toast.error("File tidak valid!");
+          toast.error("File tidak valid!", {
+            autoClose: 3000,
+          });
           return false;
         } else {
           if (Array.isArray(graphData.nodes) && graphData.nodes.length > 0) {
@@ -708,14 +712,20 @@ const Map = () => {
                 graphData.nodes[i].latitude == undefined ||
                 graphData.nodes[i].longitude == undefined
               ) {
-                toast.error("Atribut simpul tidak valid!");
+                toast.error("Atribut simpul tidak valid!", {
+                  autoClose: 3000,
+                });
                 return false;
               } else {
                 if (graphData.nodes[i].name.length > 18) {
-                  toast.error("Nama simpul terlalu panjang!");
+                  toast.error("Nama simpul terlalu panjang!", {
+                    autoClose: 3000,
+                  });
                   return false;
                 } else if (graphData.nodes[i].id != i + 1) {
-                  toast.error("ID simpul tidak valid!");
+                  toast.error("ID simpul tidak valid!", {
+                    autoClose: 3000,
+                  });
                   return false;
                 } else if (
                   graphData.nodes[i].latitude < -90 ||
@@ -723,7 +733,9 @@ const Map = () => {
                   graphData.nodes[i].longitude < -180 ||
                   graphData.nodes[i].longitude > 180
                 ) {
-                  toast.error("Latitude/Longitude simpul tidak valid!");
+                  toast.error("Latitude/Longitude simpul tidak valid!", {
+                    autoClose: 3000,
+                  });
                   return false;
                 }
               }
@@ -738,12 +750,16 @@ const Map = () => {
                   !Array.isArray(graphData.matrix[i]) ||
                   graphData.matrix[i].length != graphData.matrix.length
                 ) {
-                  toast.error("Matrix Adjacency tidak valid!");
+                  toast.error("Matrix Adjacency tidak valid!", {
+                    autoClose: 3000,
+                  });
                   return false;
                 } else {
                   for (let j = 0; j < graphData.matrix[i].length; j++) {
                     if (isNaN(graphData.matrix[i][j])) {
-                      toast.error("Matrix Adjacency tidak valid!");
+                      toast.error("Matrix Adjacency tidak valid!", {
+                        autoClose: 3000,
+                      });
                       return false;
                     }
                   }
@@ -751,11 +767,15 @@ const Map = () => {
               }
               return true;
             } else {
-              toast.error("Matrix Adjacency tidak valid!");
+              toast.error("Matrix Adjacency tidak valid!", {
+                autoClose: 3000,
+              });
               return false;
             }
           } else {
-            toast.error("Simpul tidak valid!");
+            toast.error("Simpul tidak valid!", {
+              autoClose: 3000,
+            });
             return false;
           }
         }
@@ -837,7 +857,9 @@ const Map = () => {
       // UCS Event
       UCSButton.addEventListener("click", () => {
         if (selectStart.value === "" || selectGoal.value === "") {
-          toast.error("Tidak dapat melakukan pencarian rute!");
+          toast.error("Tidak dapat melakukan pencarian rute!", {
+            autoClose: 3000,
+          });
         } else {
           triggerUCS();
         }
@@ -846,7 +868,9 @@ const Map = () => {
       // A* Event
       AStarButton.addEventListener("click", () => {
         if (selectStart.value === "" || selectGoal.value === "") {
-          toast.error("Tidak dapat melakukan pencarian rute!");
+          toast.error("Tidak dapat melakukan pencarian rute!", {
+            autoClose: 3000,
+          });
         } else {
           triggerAStar();
         }
@@ -855,13 +879,17 @@ const Map = () => {
       // Restart Event
       restartButton.addEventListener("click", () => {
         resetMap("");
-        toast.success("Berhasil reset map!");
+        toast.success("Berhasil reset map!", {
+          autoClose: 3000,
+        });
       });
 
       // Add Path Event
       addPathButton.addEventListener("click", () => {
         if (selectFirst.value === "" || selectSecond.value === "") {
-          toast.error("Tidak dapat menambahkan path!");
+          toast.error("Tidak dapat menambahkan path!", {
+            autoClose: 3000,
+          });
         } else {
           addPath();
         }
