@@ -816,7 +816,7 @@ const Map = () => {
           let name = marker
             .getPopup()
             ?.getContent() // @ts-ignore
-            ?.querySelector("p").innerHTML;
+            ?.querySelector("span").innerHTML;
           updateSimpul(name, marker.getLatLng().lat, marker.getLatLng().lng);
           if (active) {
             if (currentAlgorithm === "UCS") {
@@ -942,7 +942,7 @@ const Map = () => {
                     let name = marker
                       .getPopup()
                       ?.getContent() // @ts-ignore
-                      ?.querySelector("p").innerHTML;
+                      ?.querySelector("span").innerHTML;
                     updateSimpul(
                       name,
                       marker.getLatLng().lat,
