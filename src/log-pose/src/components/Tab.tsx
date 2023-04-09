@@ -38,14 +38,14 @@ const Tab = ({
               <h2 className="text-lg font-semibold">Start Node</h2>
               <select
                 id="start-node"
-                className="shadow-lg rounded-xl py-2 px-2 border-2 border-black scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-rounded-xl"
+                className="shadow-lg rounded-xl py-2 px-2 border-2 border-black scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-rounded-xl break-words"
               ></select>
             </div>
             <div className="flex flex-col w-full gap-2">
               <h2 className="text-lg font-semibold">Goal Node</h2>
               <select
                 id="goal-node"
-                className="shadow-lg rounded-xl py-2 px-2 border-2 border-black scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-rounded-xl"
+                className="shadow-lg rounded-xl py-2 px-2 border-2 border-black scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-rounded-xl break-words"
               ></select>
             </div>
           </div>
@@ -62,14 +62,14 @@ const Tab = ({
               <h2 className="text-lg font-semibold">First Node</h2>
               <select
                 id="first-node"
-                className="shadow-lg rounded-xl py-2 px-2 border-2 border-black scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-rounded-xl"
+                className="shadow-lg rounded-xl py-2 px-2 border-2 border-black scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-rounded-xl break-words"
               ></select>
             </div>
             <div className="flex flex-col w-full gap-2">
               <h2 className="text-lg font-semibold">Second Node</h2>
               <select
                 id="second-node"
-                className="shadow-lg rounded-xl py-2 px-2 border-2 border-black scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-rounded-xl"
+                className="shadow-lg rounded-xl py-2 px-2 border-2 border-black scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-rounded-xl break-words"
               ></select>
             </div>
           </div>

@@ -119,6 +119,7 @@ const Map = () => {
         }
         for (let i = 0; i < nodes.length; i++) {
           if (nodes[i].id == simpul.id) {
+            toast.success(`Berhasil menghapus simpul ${simpul.name}`);
             nodes[i] = new Simpul(simpul.id, "deleted", 0, 0);
           }
         }
@@ -664,17 +665,21 @@ const Map = () => {
               // Create Delete Button
               let buttonDelete = document.createElement("button");
               buttonDelete.innerHTML = "Delete";
+              buttonDelete.className =
+                "mx-auto text-center bg-white border-2 rounded-xl px-6 py-2 font-semibold text-black border-b-4 rounded shadow-lg active:shadow-none active:translate-y-[2px]";
               buttonDelete.addEventListener("click", () => {
                 map.removeLayer(selectedLayer);
                 deletePath(i, j);
               });
 
               // Create Name
-              let name = document.createElement("p");
+              let name = document.createElement("span");
               name.innerHTML = popupContent;
+              name.className = "text-center my-2";
 
               // Create Content
               let content = document.createElement("div");
+              content.className = "flex flex-col";
               content.appendChild(name);
               content.appendChild(buttonDelete);
 
@@ -688,6 +693,74 @@ const Map = () => {
         }
       };
 
+      // Function to validate file
+      // @ts-ignore
+      const validateFile = (graphData) => {
+        if (graphData.nodes == undefined || graphData.matrix == undefined) {
+          toast.error("File tidak valid!");
+          return false;
+        } else {
+          if (Array.isArray(graphData.nodes) && graphData.nodes.length > 0) {
+            for (let i = 0; i < graphData.nodes.length; i++) {
+              if (
+                graphData.nodes[i].id == undefined ||
+                graphData.nodes[i].name == undefined ||
+                graphData.nodes[i].latitude == undefined ||
+                graphData.nodes[i].longitude == undefined
+              ) {
+                toast.error("Atribut simpul tidak valid!");
+                return false;
+              } else {
+                if (graphData.nodes[i].name.length > 18) {
+                  toast.error("Nama simpul terlalu panjang!");
+                  return false;
+                } else if (graphData.nodes[i].id != i + 1) {
+                  toast.error("ID simpul tidak valid!");
+                  return false;
+                } else if (
+                  graphData.nodes[i].latitude < -90 ||
+                  graphData.nodes[i].latitude > 90 ||
+                  graphData.nodes[i].longitude < -180 ||
+                  graphData.nodes[i].longitude > 180
+                ) {
+                  toast.error("Latitude/Longitude simpul tidak valid!");
+                  return false;
+                }
+              }
+            }
+
+            if (
+              Array.isArray(graphData.matrix) &&
+              graphData.matrix.length > 0
+            ) {
+              for (let i = 0; i < graphData.matrix.length; i++) {
+                if (
+                  !Array.isArray(graphData.matrix[i]) ||
+                  graphData.matrix[i].length != graphData.matrix.length
+                ) {
+                  toast.error("Matrix Adjacency tidak valid!");
+                  return false;
+                } else {
+                  for (let j = 0; j < graphData.matrix[i].length; j++) {
+                    if (isNaN(graphData.matrix[i][j])) {
+                      toast.error("Matrix Adjacency tidak valid!");
+                      return false;
+                    }
+                  }
+                }
+              }
+              return true;
+            } else {
+              toast.error("Matrix Adjacency tidak valid!");
+              return false;
+            }
+          } else {
+            toast.error("Simpul tidak valid!");
+            return false;
+          }
+        }
+      };
+
       /* Events */
       // Create new node when double click
       map.on("dblclick", (e) => {
@@ -696,14 +769,18 @@ const Map = () => {
 
         // Create Delete Button
         let buttonDelete = document.createElement("button");
+        buttonDelete.className =
+          "mx-auto text-center bg-white border-2 rounded-xl px-6 py-2 font-semibold text-black border-b-4 rounded shadow-lg active:shadow-none active:translate-y-[2px]";
         buttonDelete.innerHTML = "Delete";
 
         // Create Marker Name
-        let name = document.createElement("p");
+        let name = document.createElement("span");
+        name.className = "text-center my-2";
         name.innerHTML = manyNodes.toString();
 
         // Create Content Popup
         let content = document.createElement("div");
+        content.className = "flex flex-col";
         content.appendChild(name);
         content.appendChild(buttonDelete);
 
@@ -778,6 +855,7 @@ const Map = () => {
       // Restart Event
       restartButton.addEventListener("click", () => {
         resetMap("");
+        toast.success("Berhasil reset map!");
       });
 
       // Add Path Event
@@ -803,141 +881,150 @@ const Map = () => {
               // Parse JSON File
               const data = event.target?.result as string;
               const graphData = JSON.parse(data);
+              if (validateFile(graphData)) {
+                // Add markers to the map
+                graphData.nodes.forEach((markerData: any) => {
+                  // Create marker
+                  const marker = L.marker(
+                    [markerData.latitude, markerData.longitude],
+                    {
+                      draggable: true,
+                    }
+                  );
 
-              // Add markers to the map
-              graphData.nodes.forEach((markerData: any) => {
-                // Create marker
-                const marker = L.marker(
-                  [markerData.latitude, markerData.longitude],
-                  {
-                    draggable: true,
-                  }
-                );
+                  // Create Delete Button
+                  let buttonDelete = document.createElement("button");
+                  buttonDelete.className =
+                    "mx-auto text-center bg-white border-2 rounded-xl px-6 py-2 font-semibold text-black border-b-4 rounded shadow-lg active:shadow-none active:translate-y-[2px]";
+                  buttonDelete.innerHTML = "Delete";
 
-                // Create Delete Button
-                let buttonDelete = document.createElement("button");
-                buttonDelete.innerHTML = "Delete";
+                  // Create Name
+                  let name = document.createElement("span");
+                  name.className = "text-center my-2";
+                  name.innerHTML = markerData.name;
 
-                // Create Name
-                let name = document.createElement("p");
-                name.innerHTML = markerData.name;
+                  // Create new option to select elements
+                  createOption(markerData.name);
 
-                // Create new option to select elements
-                createOption(markerData.name);
+                  // Create popup content
+                  let content = document.createElement("div");
+                  content.className = "flex flex-col";
+                  content.appendChild(name);
+                  content.appendChild(buttonDelete);
 
-                // Create popup content
-                let content = document.createElement("div");
-                content.appendChild(name);
-                content.appendChild(buttonDelete);
+                  // Add marker to map
+                  marker.bindPopup(content).addTo(map);
 
-                // Add marker to map
-                marker.bindPopup(content).addTo(map);
+                  // Increment many nodes and push new Simpul to list of nodes
+                  manyNodes++;
 
-                // Increment many nodes and push new Simpul to list of nodes
-                manyNodes++;
+                  let newSimpul = new Simpul(
+                    markerData.id,
+                    markerData.name,
+                    markerData.latitude,
+                    markerData.longitude
+                  );
 
-                let newSimpul = new Simpul(
-                  markerData.id,
-                  markerData.name,
-                  markerData.latitude,
-                  markerData.longitude
-                );
+                  nodes.push(newSimpul);
 
-                nodes.push(newSimpul);
+                  buttonDelete.addEventListener("click", () => {
+                    map.removeLayer(selectedLayer);
+                    deleteSimpul(newSimpul);
+                  });
 
-                buttonDelete.addEventListener("click", () => {
-                  map.removeLayer(selectedLayer);
-                  deleteSimpul(newSimpul);
+                  // Push new marker to markers
+                  markers.push(marker);
+
+                  // Add dragend listener to marker
+                  marker.on("dragend", () => {
+                    restartDefaultMarker();
+                    redrawPaths();
+                    let name = marker
+                      .getPopup()
+                      ?.getContent() // @ts-ignore
+                      ?.querySelector("p").innerHTML;
+                    updateSimpul(
+                      name,
+                      marker.getLatLng().lat,
+                      marker.getLatLng().lng
+                    );
+                    if (active) {
+                      if (currentAlgorithm === "UCS") {
+                        triggerUCS();
+                      } else {
+                        triggerAStar();
+                      }
+                    }
+                  });
                 });
 
-                // Push new marker to markers
-                markers.push(marker);
+                // Add paths to the map
+                for (let i = 0; i < graphData.matrix.length; i++) {
+                  for (let j = i; j < graphData.matrix[0].length; j++) {
+                    // If edge exists
+                    if (graphData.matrix[i][j] != 0) {
+                      // Create polyline as path
+                      const polyline: L.Polyline = L.polyline(
+                        [markers[i].getLatLng(), markers[j].getLatLng()],
+                        {
+                          color: "blue",
+                        }
+                      ).addTo(map);
 
-                // Add dragend listener to marker
-                marker.on("dragend", () => {
-                  restartDefaultMarker();
-                  redrawPaths();
-                  let name = marker
-                    .getPopup()
-                    ?.getContent() // @ts-ignore
-                    ?.querySelector("p").innerHTML;
-                  updateSimpul(
-                    name,
-                    marker.getLatLng().lat,
-                    marker.getLatLng().lng
-                  );
-                  if (active) {
-                    if (currentAlgorithm === "UCS") {
-                      triggerUCS();
-                    } else {
-                      triggerAStar();
+                      // Calculate distance
+                      let distance: number =
+                        markers[i]
+                          .getLatLng()
+                          .distanceTo(markers[j].getLatLng()) / 1000;
+
+                      // Create popup content with distance
+                      let popupContent: string =
+                        "Distance: " + distance.toFixed(4) + " km";
+
+                      // Create Delete Button
+                      let buttonDelete = document.createElement("button");
+                      buttonDelete.innerHTML = "Delete";
+                      buttonDelete.className =
+                        "mx-auto text-center bg-white border-2 rounded-xl px-6 py-2 font-semibold text-black border-b-4 rounded shadow-lg active:shadow-none active:translate-y-[2px]";
+                      buttonDelete.addEventListener("click", () => {
+                        map.removeLayer(selectedLayer);
+                        deletePath(i, j);
+                      });
+
+                      // Create name
+                      let name = document.createElement("span");
+                      name.className = "text-center my-2";
+                      name.innerHTML = popupContent;
+
+                      // Create Content Element
+                      let content = document.createElement("div");
+                      content.className = "flex flex-col";
+                      content.appendChild(name);
+                      content.appendChild(buttonDelete);
+
+                      // Bind content with popup polyline
+                      polyline.bindPopup(content);
+
+                      // Push new polyline to array
+                      paths.push(polyline);
                     }
                   }
-                });
-              });
-
-              // Add paths to the map
-              for (let i = 0; i < graphData.matrix.length; i++) {
-                for (let j = i; j < graphData.matrix[0].length; j++) {
-                  // If edge exists
-                  if (graphData.matrix[i][j] != 0) {
-                    // Create polyline as path
-                    const polyline: L.Polyline = L.polyline(
-                      [markers[i].getLatLng(), markers[j].getLatLng()],
-                      {
-                        color: "blue",
-                      }
-                    ).addTo(map);
-
-                    // Calculate distance
-                    let distance: number =
-                      markers[i]
-                        .getLatLng()
-                        .distanceTo(markers[j].getLatLng()) / 1000;
-
-                    // Create popup content with distance
-                    let popupContent: string =
-                      "Distance: " + distance.toFixed(4) + " km";
-
-                    // Create Delete Button
-                    let buttonDelete = document.createElement("button");
-                    buttonDelete.innerHTML = "Delete";
-                    buttonDelete.addEventListener("click", () => {
-                      map.removeLayer(selectedLayer);
-                      deletePath(i, j);
-                    });
-
-                    // Create name
-                    let name = document.createElement("p");
-                    name.innerHTML = popupContent;
-
-                    // Create Content Element
-                    let content = document.createElement("div");
-                    content.appendChild(name);
-                    content.appendChild(buttonDelete);
-
-                    // Bind content with popup polyline
-                    polyline.bindPopup(content);
-
-                    // Push new polyline to array
-                    paths.push(polyline);
-                  }
                 }
+
+                // Set matrix from file
+                matrix = graphData.matrix;
+
+                // To improve the appearance of map
+                const myGroup = L.featureGroup(markers);
+
+                // Set padding with 30
+                const options = {
+                  padding: L.point([30, 30]),
+                };
+
+                // Improve apperance of map
+                map.fitBounds(myGroup.getBounds(), options);
               }
-
-              // Set matrix from file
-              matrix = graphData.matrix;
-
-              // To improve the appearance of map
-              const myGroup = L.featureGroup(markers);
-
-              // Set padding with 30
-              const options = {
-                padding: L.point([30, 30]),
-              };
-
-              // Improve apperance of map
-              map.fitBounds(myGroup.getBounds(), options);
             };
 
             // Finish read file

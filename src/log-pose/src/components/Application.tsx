@@ -22,10 +22,14 @@ const Application = () => {
           </div>
           <Map />
         </div>
-        <input type="file" id="fileInput" className="w-1/3" />
+        <input
+          type="file"
+          id="fileInput"
+          className="w-1/3 shadow-lg mr-6 flex-auto rounded border border-solid border-neutral-400 bg-clip-padding px-3 py-[0.32rem] text-base font-semibold text-black transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-white focus:border-primary focus:text-neutral-700 focus:shadow-[0_0_0_1px] focus:shadow-primary focus:outline-none"
+        />
         <button
           id="a*"
-          className={`mt-6 border-2 py-2 px-4 border-black mr-4 bg-white rounded-xl ${
+          className={`mt-6 mr-4 bg-white border-2 rounded-xl px-6 py-2 font-semibold text-black border-b-4 rounded shadow-lg active:shadow-none active:translate-y-[2px] ${
             activeTab === "Start & Goal" ? "" : "hidden"
           }`}
         >
@@ -33,7 +37,7 @@ const Application = () => {
         </button>
         <button
           id="ucs"
-          className={`mt-6 border-2 py-2 px-4 border-black mr-4 bg-white rounded-xl ${
+          className={`mt-6 mr-4 bg-white border-2 rounded-xl px-6 py-2 font-semibold text-black border-b-4 rounded shadow-lg active:shadow-none active:translate-y-[2px] ${
             activeTab === "Start & Goal" ? "" : "hidden"
           }`}
         >
@@ -41,7 +45,7 @@ const Application = () => {
         </button>
         <button
           id="add-path"
-          className={`mt-6 border-2 py-2 px-4 border-black mr-4 bg-white rounded-xl ${
+          className={`mt-6 mr-4 bg-white border-2 rounded-xl px-6 py-2 font-semibold text-black border-b-4 rounded shadow-lg active:shadow-none active:translate-y-[2px] ${
             activeTab === "Add Path" ? "" : "hidden"
           }`}
         >
@@ -49,7 +53,7 @@ const Application = () => {
         </button>
         <button
           id="restart"
-          className="mt-6 border-2 py-2 px-4 border-black bg-white rounded-xl"
+          className="mt-6 bg-white border-2 rounded-xl px-6 py-2 font-semibold text-black border-b-4 rounded shadow-lg active:shadow-none active:translate-y-[2px]"
         >
           Restart
         </button>
