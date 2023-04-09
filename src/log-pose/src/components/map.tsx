@@ -586,6 +586,7 @@ const Map = () => {
         markers = [];
         nodes = [];
         paths = [];
+        matrix = [];
 
         selectStart.innerHTML = "";
         selectGoal.innerHTML = "";
