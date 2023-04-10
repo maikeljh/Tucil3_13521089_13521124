@@ -49,6 +49,21 @@ The UCS follows the same pattern, but without the information of h(n), it does n
 
 ## Running The Program
 
+To run the program:
+
+1. run npm install in directory ./src/log-pose
+2. run npm install @types/leaflet and npm install leaflet
+3. run npm run dev
+
+**Here are some examples of displays:**
+
+![Screenshot_2956](https://user-images.githubusercontent.com/87570374/230984920-6bf27b49-036b-4fa4-a8c4-3bb92b29af1e.png)
+
+![Screenshot_2957](https://user-images.githubusercontent.com/87570374/230984937-b1a66223-888b-4e3d-b058-78cc76e2744b.png)
+
+![Screenshot_2958](https://user-images.githubusercontent.com/87570374/230984954-d5174bdd-2118-4bfd-8b68-4c21e6fe1ccd.png)
+
+![Screenshot_2959](https://user-images.githubusercontent.com/87570374/230984963-6432b222-81a4-43c2-af37-47dee9f046ef.png)
 
 ## Libraries Used
 
