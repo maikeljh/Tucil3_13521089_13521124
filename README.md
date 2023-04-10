@@ -9,6 +9,7 @@
   - [Algorithm Description](#algorithm-description)
   - [Program Structure](#program-structure)
   - [Running The Program](#running-the-program)
+  - [Libraries Used](#libraries-used)
 
 
 ## Project Description
@@ -23,14 +24,31 @@ This project solves the problem with a web application, that uses a map API to i
 
 ## Program Features
 
+The program features are listed below:
+1. Double clicking on the map will create a new node
+2. Ability to add path between nodes
+3. Translating nodes to graph automatically, with real latitudes and longitudes
+4. Import .json files for testing purposes
+5. A* Search for the shortest path between nodes
+6. UCS for the shortest path between nodes
+7. Distance for each route
 
 ## Algorithm Description
 
+The A* Search is an informed search algorithm that uses a heuristic function to optimize its decision making. with the function as follows:
+
+g(n) = distance from the root node to node n
+h(n) = approximate distance from node n to goal node
+f(n) = g(n) + h(n)
+
+As long as the approximation distance is less than the real distance, h(n) < real distance from n to goal node, then the decision made by following f(n) is optimal.
+
+The UCS follows the same pattern, but without the information of h(n), it does not know the approximate distance from n to goal node. Thus, making the decision function f(n) = g(n). This function will determine the decision of the algorithm, with the algorithm only expanding the lowest cost so far.
 
 ## Program Structure
-
 
 ## Running The Program
 
 
+## Libraries Used
 
