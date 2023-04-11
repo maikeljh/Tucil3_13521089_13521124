@@ -56,8 +56,7 @@ The UCS follows the same pattern, but without the information of h(n), it does n
 │       │   ├───img
 │       │   │   ├───...jpeg
 │       │   │   └───...png
-│       │   ├───favivon.ico
-│       │   └───...svg
+│       │   └───favicon.ico
 │       ├───src
 │       │   ├───algorithms
 │       │   │   ├───AStar.ts
