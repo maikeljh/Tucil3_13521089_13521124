@@ -209,12 +209,12 @@ const Map = () => {
         redrawPaths();
 
         if (firstName === secondName) {
-          toast.error("Tidak bisa menambahkan rute ke simpul yang sama!", {
+          toast.error("Tidak bisa menambahkan rute antara simpul yang sama!", {
             autoClose: 3000,
           });
         } else {
           toast.success(
-            `Berhasil menambahkan rute dari ${firstName} ke ${secondName}`,
+            `Berhasil menambahkan rute antara ${firstName} dengan ${secondName}`,
             {
               autoClose: 3000,
             }
@@ -236,7 +236,7 @@ const Map = () => {
         updateMatrixDeletePath(i, j);
         redrawPaths();
         toast.success(
-          `Berhasil menghapus rute dari ${nodes[i].name} ke ${nodes[j].name}`,
+          `Berhasil menghapus rute antara ${nodes[i].name} dengan ${nodes[j].name}`,
           { autoClose: 3000 }
         );
         if (active) {
