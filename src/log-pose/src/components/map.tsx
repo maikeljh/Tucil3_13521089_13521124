@@ -7,6 +7,7 @@ import { UniformCostSearch } from "../algorithms/UniformCostSearch";
 import { Simpul } from "../algorithms/Simpul";
 import { AStar } from "@/algorithms/AStar";
 import "react-toastify/dist/ReactToastify.min.css";
+import "leaflet-arrowheads";
 import { toast } from "react-toastify";
 
 const Map = () => {
@@ -130,7 +131,6 @@ const Map = () => {
       // Function update matrix after add path
       const updateMatrixAddPath = (i: number, j: number) => {
         matrix[i][j] = 1;
-        matrix[j][i] = 1;
       };
 
       // Function update matrix after delete path
@@ -209,12 +209,12 @@ const Map = () => {
         redrawPaths();
 
         if (firstName === secondName) {
-          toast.error("Tidak bisa menambahkan rute antara simpul yang sama!", {
+          toast.error("Tidak bisa menambahkan rute ke simpul yang sama!", {
             autoClose: 3000,
           });
         } else {
           toast.success(
-            `Berhasil menambahkan rute antara ${firstName} dengan ${secondName}`,
+            `Berhasil menambahkan rute dari ${firstName} ke ${secondName}`,
             {
               autoClose: 3000,
             }
@@ -647,14 +647,43 @@ const Map = () => {
         for (let i = 0; i < matrix.length; i++) {
           for (let j = i; j < matrix[0].length; j++) {
             // If edge exists
-            if (matrix[i][j] != 0) {
+            if (matrix[i][j] != 0 || matrix[j][i] != 0) {
               // Create polyline as path
-              const polyline: L.Polyline = L.polyline(
-                [markers[i].getLatLng(), markers[j].getLatLng()],
-                {
-                  color: "blue",
-                }
-              ).addTo(map);
+              let polyline: L.Polyline;
+              if (matrix[i][j] != 0 && matrix[j][i] != 0) {
+                polyline = L.polyline(
+                  [markers[i].getLatLng(), markers[j].getLatLng()],
+                  {
+                    color: "blue",
+                  }
+                ).addTo(map);
+              } else if (matrix[i][j] != 0) {
+                polyline = L.polyline(
+                  [markers[i].getLatLng(), markers[j].getLatLng()],
+                  {
+                    color: "blue",
+                  }
+                )
+                  .arrowheads({
+                    fill: true,
+                    size: "10px",
+                    offsets: { end: "50px" },
+                  })
+                  .addTo(map);
+              } else {
+                polyline = L.polyline(
+                  [markers[j].getLatLng(), markers[i].getLatLng()],
+                  {
+                    color: "blue",
+                  }
+                )
+                  .arrowheads({
+                    fill: true,
+                    size: "10px",
+                    offsets: { end: "50px" },
+                  })
+                  .addTo(map);
+              }
 
               // Calculate distance
               let distance: number =
@@ -991,14 +1020,49 @@ const Map = () => {
                 for (let i = 0; i < graphData.matrix.length; i++) {
                   for (let j = i; j < graphData.matrix[0].length; j++) {
                     // If edge exists
-                    if (graphData.matrix[i][j] != 0) {
+                    if (
+                      graphData.matrix[i][j] != 0 ||
+                      graphData.matrix[j][i] != 0
+                    ) {
                       // Create polyline as path
-                      const polyline: L.Polyline = L.polyline(
-                        [markers[i].getLatLng(), markers[j].getLatLng()],
-                        {
-                          color: "blue",
-                        }
-                      ).addTo(map);
+                      let polyline: L.Polyline;
+                      if (
+                        graphData.matrix[i][j] != 0 &&
+                        graphData.matrix[j][i] != 0
+                      ) {
+                        polyline = L.polyline(
+                          [markers[i].getLatLng(), markers[j].getLatLng()],
+                          {
+                            color: "blue",
+                          }
+                        ).addTo(map);
+                      } else if (graphData.matrix[i][j] != 0) {
+                        polyline = L.polyline(
+                          [markers[i].getLatLng(), markers[j].getLatLng()],
+                          {
+                            color: "blue",
+                          }
+                        )
+                          .arrowheads({
+                            fill: true,
+                            size: "10px",
+                            offsets: { end: "50px" },
+                          })
+                          .addTo(map);
+                      } else {
+                        polyline = L.polyline(
+                          [markers[j].getLatLng(), markers[i].getLatLng()],
+                          {
+                            color: "blue",
+                          }
+                        )
+                          .arrowheads({
+                            fill: true,
+                            size: "10px",
+                            offsets: { end: "50px" },
+                          })
+                          .addTo(map);
+                      }
 
                       // Calculate distance
                       let distance: number =
