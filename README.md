@@ -1,5 +1,7 @@
 # Tucil3_13521089_13521124
 
+Link Website : https://log-pose.vercel.app/
+
 ## Table of Contents
 - [Tucil3\_13521089\_13521124](#tucil3_13521089_13521124)
   - [Table of Contents](#table-of-contents)
@@ -47,13 +49,74 @@ The UCS follows the same pattern, but without the information of h(n), it does n
 
 ## Program Structure
 
+```bash
+├───src
+│   └───log-pose
+│       ├───public
+│       │   ├───img
+│       │   │   ├───...jpeg
+│       │   │   └───...png
+│       │   ├───favivon.ico
+│       │   └───...svg
+│       ├───src
+│       │   ├───algorithms
+│       │   │   ├───AStar.ts
+│       │   │   ├───Prioqueuesimpul.ts
+│       │   │   ├───SearchAlgorithm.ts
+│       │   │   ├───Simpul.ts
+│       │   │   └───UniformCostSearch.ts
+│       │   ├───components
+│       │   │   ├───About.tsx
+│       │   │   ├───Application.tsx
+│       │   │   ├───ContactUs.tsx
+│       │   │   ├───Footer.tsx
+│       │   │   ├───Navbar.tsx
+│       │   │   ├───Tab.tsx
+│       │   │   └───map.tsx
+│       │   ├───pages
+│       │   │   ├───_app.tsx
+│       │   │   ├───_document.tsx
+│       │   │   └───index.tsx
+│       │   └───styles
+│       │       └───globals.css
+│       ├───...json
+│       └───...js
+├───doc
+│   └───Tucil3_13521089_13521124.pdf
+├───test
+│   ├───ITB.json
+│   ├───BandungSelatanSMAKen.json
+│   ├───RSBorromeus.json
+│   ├───SekitarAlunAlun.json
+│   ├───NotValid-1.json
+│   ├───NotValid-2.json
+│   ├───NotValid-3.json
+│   ├───NotValid-4.json
+│   ├───NotValid-5.json
+│   ├───NotValid-6.json
+│   ├───NotValid-7.json
+│   ├───NotValid-8.json
+│   ├───NotValid-9.json
+│   ├───NotValid-10.json
+│   ├───NotValid-11.json
+│   └───Pasadena.json
+└───README.md
+```
+
 ## Running The Program
 
 To run the program:
-
-1. run npm install in directory ./src/log-pose
-2. run npm install @types/leaflet and npm install leaflet
-3. run npm run dev
+1. Install dependencies
+    > 
+        cd src/log-pose
+        npm install
+2. Install leaflet
+    > 
+        npm install @types/leaflet
+        npm install leaflet
+3. Run the application in development mode
+    > 
+        npm run dev
 
 **Here are some examples of displays:**
 
@@ -66,4 +129,10 @@ To run the program:
 ![Screenshot_2959](https://user-images.githubusercontent.com/87570374/230984963-6432b222-81a4-43c2-af37-47dee9f046ef.png)
 
 ## Libraries Used
-
+1. Next.js
+2. Tailwind
+3. Leaflet
+4. Openstreetmap
+5. Tailwind Scrollbar
+6. React Toastify
+7. ESLint
