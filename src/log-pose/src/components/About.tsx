@@ -35,6 +35,14 @@ const About = () => {
               {`"Choose Start And Goal"`} tab.
             </li>
             <li>Press A* or UCS algorithm to find the route.</li>
+            <li>
+              You can update the location of a node by dragging the marker to
+              another location.
+            </li>
+            <li>
+              You can also delete a path by clicking the path and press the
+              delete button.
+            </li>
           </ol>
           <pre className="lg:text-[1.5rem] text-[0.75rem] mt-6">
             The example valid JSON format :{"\n"}
