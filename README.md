@@ -2,6 +2,10 @@
 
 Link Website : https://log-pose.vercel.app/
 
+## Author
+- [Kenneth Ezekiel Suprantoni - 13521089](https://github.com/kenezekiel) 
+- [Michael Jonathan Halim - 13521124](https://github.com/maikeljh) 
+
 ## Table of Contents
 - [Tucil3\_13521089\_13521124](#tucil3_13521089_13521124)
   - [Table of Contents](#table-of-contents)
